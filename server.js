@@ -1,68 +1,68 @@
 
 
-var path = require('path');
+const path = require('path');
 
-var http = require('http');
-var server = http.createServer();
+const http = require('http');
+const server = http.createServer();
 
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 
 
-var socketio = require('socket.io'); 
+const socketio = require('socket.io');
 
 server.on('request', app);
 
 
 // creates a new connection server for web sockets and integrates
-// it into our HTTP server 
-// this needs to be below the server.on('request', app) so that our 
-// express app takes precedence over our socekt server for typical 
-// HTTP requests 
-var io = socketio(server);
+// it into our HTTP server
+// this needs to be below the server.on('request', app) so that our
+// express app takes precedence over our socekt server for typical
+// HTTP requests
+const io = socketio(server);
 
 
 // // use socket server as an event emitter in order to listen for new connctions
-io.on('connection', function(socket){
+io.on('connection', socket => {
 
 
   //receives the newly connected socket
   //called for each browser that connects to our server
   console.log('A new client has connected')
-  console.log('socket id: ', socket.id)
+  console.log(`socket id: ${socket.id}`)
 
   //event that runs anytime a socket disconnects
-  socket.on('disconnect', function(){
-    console.log('socket id ' + socket.id + ' has disconnected. : ('); 
+  socket.on('disconnect', () => {
+    console.log(`socket id ${socket.id} has disconnected.`);
   })
 
-  // server is receiving draw data from the client here 
-  // so we want to broadcast that data to all other connected clients 
-  socket.on('imDrawing', function(start, end, color){
+  // server is receiving draw data from the client here
+  // so we want to broadcast that data to all other connected clients
+  socket.on('imDrawing', (start, end, color) => {
     console.log('catching the draw event here')
 
-    // we need to emit an event all sockets except the socket that originally emitted the 
-    // the draw data to the server 
-    // broadcasting means sending a message to everyone else except for the 
-    // the socket that starts it 
-    socket.broadcast.emit('otherDraw', start, end, color); 
-  }); 
+    // we need to emit an event all sockets except the socket that originally emitted the
+    // the draw data to the server
+    // broadcasting means sending a message to everyone else except for the
+    // the socket that starts it
+    socket.broadcast.emit('otherDraw', start, end, color);
+  });
 
 
 })
 
 /*
-ROOMS: 
+ROOMS:
 */
 
-// var drawHistory = {};
+// const drawHistory = {};
 
 // io.on('connection', function (socket) {
 
-//     // scope issues 
-//     var room = null;
+//     // scope issues
+//     const room = null;
 
-//     // listens to 37 emit 
+//     // listens to 37 emit
 //     socket.on('wantToJoinRoomPlox', function (roomName) {
 //         room = roomName;
 //         socket.join(roomName);
@@ -96,4 +96,3 @@ app.get('/', function (req, res) {
 server.listen(1337, function () {
     console.log('The server is listening on port 1337!');
 });
-
